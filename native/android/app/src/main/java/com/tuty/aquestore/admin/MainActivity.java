@@ -1,0 +1,9 @@
+package com.tuty.aquestore.admin;
+import android.app.*;import android.os.*;import android.content.*;import android.net.Uri;import android.webkit.*;
+public class MainActivity extends Activity {
+WebView web; ValueCallback<Uri[]> picker;
+public void onCreate(Bundle b){super.onCreate(b);web=new WebView(this);setContentView(web);web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(false);web.setWebViewClient(new WebViewClient(){public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){Uri u=r.getUrl();if("https".equals(u.getScheme())&&"vsathavan36.github.io".equals(u.getHost()))return false;if("https".equals(u.getScheme()))startActivity(new Intent(Intent.ACTION_VIEW,u));return true;}});web.setWebChromeClient(new WebChromeClient(){public boolean onShowFileChooser(WebView v,ValueCallback<Uri[]> cb,FileChooserParams p){picker=cb;try{startActivityForResult(p.createIntent(),7);}catch(Exception e){picker.onReceiveValue(null);picker=null;}return true;}});web.addJavascriptInterface(new Exporter(),"AdminExport");web.loadUrl("https://vsathavan36.github.io/tuty-aquestore/admin.html");}
+class Exporter {@JavascriptInterface public void save(String data){runOnUiThread(()->{pending=data;Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);i.setType("application/json");i.putExtra(Intent.EXTRA_TITLE,"products.json");startActivityForResult(i,8);});}}
+String pending;
+protected void onActivityResult(int r,int c,Intent d){super.onActivityResult(r,c,d);if(r==7&&picker!=null){picker.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(c,d));picker=null;}if(r==8&&c==RESULT_OK&&d!=null){try(java.io.OutputStream s=getContentResolver().openOutputStream(d.getData())){s.write(pending.getBytes(java.nio.charset.StandardCharsets.UTF_8));}catch(Exception e){android.widget.Toast.makeText(this,"Export failed",0).show();}}}
+}

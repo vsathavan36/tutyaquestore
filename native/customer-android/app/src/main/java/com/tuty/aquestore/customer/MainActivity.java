@@ -1,0 +1,8 @@
+package com.tuty.aquestore.customer;
+import android.app.*;import android.os.*;import android.content.*;import android.net.Uri;import android.webkit.*;
+public class MainActivity extends Activity {
+WebView web;
+boolean route(Uri u){String scheme=u.getScheme();if("https".equals(scheme)&&"vsathavan36.github.io".equals(u.getHost())&&u.getPath()!=null&&u.getPath().startsWith("/tuty-aquestore/")&&!u.getPath().contains("admin.html"))return false;try{if("tel".equals(scheme))startActivity(new Intent(Intent.ACTION_DIAL,u));else if("https".equals(scheme)&&"wa.me".equals(u.getHost()))startActivity(new Intent(Intent.ACTION_VIEW,u));}catch(Exception e){android.widget.Toast.makeText(this,"No app available",0).show();}return true;}
+public void onCreate(Bundle b){super.onCreate(b);web=new WebView(this);setContentView(web);web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(false);web.getSettings().setSupportMultipleWindows(true);web.setWebViewClient(new WebViewClient(){public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){return route(r.getUrl());}});web.setWebChromeClient(new WebChromeClient(){public boolean onCreateWindow(WebView v,boolean dialog,boolean gesture,Message m){WebView popup=new WebView(MainActivity.this);popup.setWebViewClient(new WebViewClient(){public boolean shouldOverrideUrlLoading(WebView w,WebResourceRequest r){route(r.getUrl());w.destroy();return true;}});((WebView.WebViewTransport)m.obj).setWebView(popup);m.sendToTarget();return true;}});web.loadUrl("https://vsathavan36.github.io/tuty-aquestore/");}
+@Override public void onBackPressed(){if(web.canGoBack())web.goBack();else super.onBackPressed();}
+}

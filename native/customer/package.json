@@ -1,0 +1,1 @@
+{"name":"tuty-aquestore","version":"1.0.0","main":"main.js","devDependencies":{"electron":"^39.0.0","electron-builder":"^26.0.0"},"build":{"appId":"com.tuty.aquestore.customer","productName":"TUTY AQUEStore","win":{"target":"portable","artifactName":"TUTY-AQUEStore-Customer.exe"}}}
